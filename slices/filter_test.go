@@ -20,10 +20,10 @@ func runFilterTestCases[T any](t *testing.T, testCases []filterTestCase[T]) {
 		t.Run(tc.Name, func(t *testing.T) {
 			result := slices.Filter(tc.Slice, tc.Filtrator)
 
-			AssertEqualLength(t, tc.ExpectedResult, result)
+			AssertEqualSlicesLength(t, tc.ExpectedResult, result)
 
 			for i, _ := range result {
-				AssertEqualFormatted(t, tc.ExpectedResult, result, i)
+				AssertEqualSlicesFormatted(t, tc.ExpectedResult, result, i)
 			}
 		})
 	}

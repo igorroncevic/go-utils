@@ -27,7 +27,15 @@ func getDefaultTestStruct(now time.Time) testStruct {
 	}
 }
 
-func AssertEqualFormatted[T any](t *testing.T, expected, actual []T, index int) {
+func AssertEqualFormatted[T any](t *testing.T, expected, actual T) {
+	assert.Equal(
+		t, expected, actual,
+		"values --> expected: '%+v', actual: '%+v'",
+		expected, actual,
+	)
+}
+
+func AssertEqualSlicesFormatted[T any](t *testing.T, expected, actual []T, index int) {
 	assert.Equal(
 		t, expected[index], actual[index],
 		"values --> expected: '%+v', actual: '%+v', at index %d, \n\tslices --> expected: %+v, actual: %+v",
@@ -35,7 +43,7 @@ func AssertEqualFormatted[T any](t *testing.T, expected, actual []T, index int) 
 	)
 }
 
-func AssertEqualLength[T any](t *testing.T, expected, actual []T) {
+func AssertEqualSlicesLength[T any](t *testing.T, expected, actual []T) {
 	assert.Equal(
 		t, len(expected), len(actual),
 		"expected length = %d, actual length = %d\n\tslices --> expected: %+v, actual: %+v",

@@ -20,10 +20,10 @@ func runMapTestCases[T any](t *testing.T, testCases []mapTestCase[T]) {
 		t.Run(tc.Name, func(t *testing.T) {
 			result := slices.Map(tc.Slice, tc.Mapper)
 
-			AssertEqualLength(t, tc.ExpectedResult, result)
+			AssertEqualSlicesLength(t, tc.ExpectedResult, result)
 
 			for i, _ := range result {
-				AssertEqualFormatted(t, tc.ExpectedResult, result, i)
+				AssertEqualSlicesFormatted(t, tc.ExpectedResult, result, i)
 			}
 		})
 	}
