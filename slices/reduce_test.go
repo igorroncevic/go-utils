@@ -64,6 +64,7 @@ func getStringReduceTestCases() []reduceTestCase[string, string] {
 		if acc == "" {
 			return elem
 		}
+
 		return fmt.Sprintf("%s, %s", acc, elem)
 	}
 

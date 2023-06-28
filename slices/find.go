@@ -12,13 +12,20 @@ var (
 //	words := []string{"somebody", "that i", "used to know"}
 //	found, err := Find(words, "somebody") // returns '"somebody", nil'
 func Find[T comparable](slice []T, toFind T) (*T, error) {
-	var found *T
+	var (
+		index = -1
+		found *T
+	)
 
-	for _, elem := range slice {
+	for i, elem := range slice {
 		if elem == toFind {
-			found = &elem
+			index = i
 			break
 		}
+	}
+
+	if index != -1 {
+		found = &slice[index]
 	}
 
 	if found == nil {

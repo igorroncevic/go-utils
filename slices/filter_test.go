@@ -22,7 +22,7 @@ func runFilterTestCases[T any](t *testing.T, testCases []filterTestCase[T]) {
 
 			AssertEqualSlicesLength(t, tc.ExpectedResult, result)
 
-			for i, _ := range result {
+			for i := range result {
 				AssertEqualSlicesFormatted(t, tc.ExpectedResult, result, i)
 			}
 		})
