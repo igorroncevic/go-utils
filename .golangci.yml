@@ -1,0 +1,136 @@
+run:
+  timeout: 30m
+
+output:
+  # Better readability of the output
+  format: tab
+  sort-results: true
+
+linters:
+  # Disable all linters.
+  disable-all: true
+  # Enable specific linter
+  # https://golangci-lint.run/usage/linters/#enabled-by-default-linters
+  enable:
+    # checks whether HTTP response body is closed successfully
+    - bodyclose
+
+    # Tool for code clone detection
+    - dupl
+
+    # Errcheck is a program for checking for unchecked errors in go programs.
+    # These unchecked errors can be critical bugs in some cases
+    - errcheck
+
+    # Tool for detection of long functions
+    - funlen
+
+    # Checks that no init functions are present in Go code
+    - gochecknoinits
+
+    # Computes and checks the cyclomatic complexity of functions
+    - gocyclo
+
+    # Gofmt checks whether code was gofmt-ed.
+    # By default this tool runs with -s option to check for code simplification
+    - gofmt
+
+    # In addition to fixing imports, goimports also formats your code in the same style as gofmt.
+    - goimports
+
+    # Detects when assignments to existing variables are not used
+    - ineffassign
+
+    # Checks Go code for unused constants, variables, functions and types
+    - unused
+
+    # Inspects source code for security problems
+    - gosec
+
+    # Whitespace Linter - Forces you to use empty lines!
+    - wsl
+
+linters-settings:
+  gocyclo:
+    # Minimal code complexity to report.
+    # Default: 30 (but we recommend 10-20)
+    min-complexity: 20
+
+  funlen:
+    # Checks the number of lines in a function.
+    # If lower than 0, disable the check.
+    # Default: 60
+    lines: 60
+    # Checks the number of statements in a function.
+    # If lower than 0, disable the check.
+    # Default: 40
+    statements: 40
+
+  gofmt:
+    # Simplify code: gofmt with `-s` option.
+    # Default: true
+    simplify: true
+
+  goimports:
+    # Put imports beginning with prefix after 3rd-party packages.
+    # It's a comma-separated list of prefixes.
+    # Default: ""
+    local-prefixes: ""
+
+  wsl:
+    # See https://github.com/bombsimon/wsl/blob/master/doc/configuration.md for documentation of available settings.
+    # These are the defaults for `golangci-lint`.
+
+    # Do strict checking when assigning from append (x = append(x, y)). If
+    # this is set to true - the append call must append either a variable
+    # assigned, called or used on the line above.
+    strict-append: true
+    # Allows assignments to be cuddled with variables used in calls on
+    # line above and calls to be cuddled with assignments of variables
+    # used in call on line above.
+    allow-assign-and-call: true
+    # Allows assignments to be cuddled with anything.
+    allow-assign-and-anything: false
+    # Allows cuddling to assignments even if they span over multiple lines.
+    allow-multiline-assign: true
+    # If the number of lines in a case block is equal to or lager than this
+    # number, the case *must* end white a newline.
+    force-case-trailing-whitespace: 0
+    # Allow blocks to end with comments.
+    allow-trailing-comment: false
+    # Allow multiple comments in the beginning of a block separated with newline.
+    allow-separated-leading-comment: false
+    # Allow multiple var/declaration statements to be cuddled.
+    allow-cuddle-declarations: false
+    # A list of call idents that everything can be cuddled with.
+    # Defaults to calls looking like locks.
+    allow-cuddle-with-calls: ["Lock", "RLock"]
+    # AllowCuddleWithRHS is a list of right hand side variables that is allowed
+    # to be cuddled with anything. Defaults to assignments or calls looking
+    # like unlocks.
+    allow-cuddle-with-rhs: ["Unlock", "RUnlock"]
+    # Causes an error when an If statement that checks an error variable doesn't
+    # cuddle with the assignment of that variable.
+    force-err-cuddling: false
+    # When force-err-cuddling is enabled this is a list of names
+    # used for error variables to check for in the conditional.
+    error-variable-names: ["err"]
+    # Causes an error if a short declaration (:=) cuddles with anything other than
+    # another short declaration.
+    # This logic overrides force-err-cuddling among others.
+    force-short-decl-cuddling: false
+
+issues:
+  # Report all issues
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  # Disable some
+  exclude-rules:
+    - path: main.go|app.go
+      linters:
+        - funlen
+    - path: _test\.go|mock|integration
+      linters:
+        - funlen
+        - goconst
+        - bodyclose
