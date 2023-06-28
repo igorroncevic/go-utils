@@ -8,63 +8,63 @@ import (
 	"github.com/igorroncevic/go-utils/slices"
 )
 
-type everyTestCase[T any] struct {
+type someTestCase[T any] struct {
 	Name           string
 	Slice          []T
 	Filtrator      func(T) bool
 	ExpectedResult bool
 }
 
-func runEveryTestCases[T any](t *testing.T, testCases []everyTestCase[T]) {
+func runSomeTestCases[T any](t *testing.T, testCases []someTestCase[T]) {
 	for _, tc := range testCases {
 		t.Run(tc.Name, func(t *testing.T) {
-			result := slices.Every(tc.Slice, tc.Filtrator)
+			result := slices.Some(tc.Slice, tc.Filtrator)
 
 			AssertEqualFormatted(t, tc.ExpectedResult, result)
 		})
 	}
 }
 
-func TestEvery(t *testing.T) {
-	runEveryTestCases[int](t, getIntEveryTestCases())
-	runEveryTestCases[string](t, getStringEveryTestCases())
-	runEveryTestCases[testStruct](t, getStructEveryTestCases())
+func TestSome(t *testing.T) {
+	runSomeTestCases[int](t, getIntSomeTestCases())
+	runSomeTestCases[string](t, getStringSomeTestCases())
+	runSomeTestCases[testStruct](t, getStructSomeTestCases())
 }
 
-func getIntEveryTestCases() []everyTestCase[int] {
+func getIntSomeTestCases() []someTestCase[int] {
 	greaterThanZero := func(a int) bool { return a > 0 }
 
-	return []everyTestCase[int]{
+	return []someTestCase[int]{
 		{
 			Name:           "int - no elements in the slice",
 			Slice:          []int{},
 			Filtrator:      greaterThanZero,
-			ExpectedResult: true,
+			ExpectedResult: false,
 		},
 		{
-			Name:           "int - 3 elements in the slice, but only one matches",
-			Slice:          []int{-1, 0, 1},
+			Name:           "int - 3 elements in the slice, none match",
+			Slice:          []int{-1, -2, -3},
 			Filtrator:      greaterThanZero,
 			ExpectedResult: false,
 		},
 		{
-			Name:           "int - 3 elements in the slice, all match",
-			Slice:          []int{1, 2, 3},
+			Name:           "int - 3 elements in the slice, one matches",
+			Slice:          []int{-1, 0, 1},
 			Filtrator:      greaterThanZero,
 			ExpectedResult: true,
 		},
 	}
 }
 
-func getStringEveryTestCases() []everyTestCase[string] {
+func getStringSomeTestCases() []someTestCase[string] {
 	stringSomeFiltrator := func(a string) bool { return strings.Contains(a, "some") }
 
-	return []everyTestCase[string]{
+	return []someTestCase[string]{
 		{
 			Name:           "string - no elements in the slice",
 			Slice:          []string{},
 			Filtrator:      stringSomeFiltrator,
-			ExpectedResult: true,
+			ExpectedResult: false,
 		},
 		{
 			Name:           "string - 3 elements in the slice, but none match",
@@ -74,14 +74,14 @@ func getStringEveryTestCases() []everyTestCase[string] {
 		},
 		{
 			Name:           "string - 3 elements in the slice, but only one matches",
-			Slice:          []string{"somebody", "something", "somewhere"},
+			Slice:          []string{"somebody", "that i", "used to know"},
 			Filtrator:      stringSomeFiltrator,
 			ExpectedResult: true,
 		},
 	}
 }
 
-func getStructEveryTestCases() []everyTestCase[testStruct] {
+func getStructSomeTestCases() []someTestCase[testStruct] {
 	now := time.Now()
 
 	filledStruct := testStruct{
@@ -94,12 +94,12 @@ func getStructEveryTestCases() []everyTestCase[testStruct] {
 		},
 	}
 
-	return []everyTestCase[testStruct]{
+	return []someTestCase[testStruct]{
 		{
 			Name:           "testStruct - no elements in the slice",
 			Slice:          []testStruct{},
 			Filtrator:      func(ts testStruct) bool { return ts.BoolField && ts.StringField != "" },
-			ExpectedResult: true,
+			ExpectedResult: false,
 		},
 		{
 			Name:           "testStruct - 1 elements in the slice, but doesn't match",
@@ -114,11 +114,7 @@ func getStructEveryTestCases() []everyTestCase[testStruct] {
 				filledStruct,
 			},
 			Filtrator: func(ts testStruct) bool {
-				if _, ok := ts.MapField["other"]; ok {
-					return true
-				}
-
-				return false
+				return ts.TimeField.After(now.Add(1 * time.Hour))
 			},
 			ExpectedResult: true,
 		},
