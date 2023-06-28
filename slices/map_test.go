@@ -38,7 +38,7 @@ func TestMap(t *testing.T) {
 func getMapIntTestCases() []mapTestCase[int] {
 	return []mapTestCase[int]{
 		{
-			Name:           "int - no elements in the array",
+			Name:           "int - no elements in the slice",
 			Slice:          []int{},
 			Mapper:         func(a int) int { return a + 1 },
 			ExpectedResult: []int{},
@@ -55,7 +55,7 @@ func getMapIntTestCases() []mapTestCase[int] {
 func getMapStringTestCases() []mapTestCase[string] {
 	return []mapTestCase[string]{
 		{
-			Name:           "string - no elements in the array",
+			Name:           "string - no elements in the slice",
 			Slice:          []string{},
 			Mapper:         func(a string) string { return fmt.Sprintf("%s - more text", a) },
 			ExpectedResult: []string{},
