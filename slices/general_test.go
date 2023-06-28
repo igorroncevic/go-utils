@@ -22,7 +22,7 @@ func getDefaultTestStruct(now time.Time) testStruct {
 		TimeField:   now,
 		BoolField:   true,
 		MapField: map[string]interface{}{
-			"some": "field",
+			"other": "field 1",
 		},
 	}
 }

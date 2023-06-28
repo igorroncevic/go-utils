@@ -30,12 +30,12 @@ func runFilterTestCases[T any](t *testing.T, testCases []filterTestCase[T]) {
 }
 
 func TestFilter(t *testing.T) {
-	runFilterTestCases[int](t, getIntTestCases())
-	runFilterTestCases[string](t, getStringTestCases())
-	runFilterTestCases[testStruct](t, getStructTestCases())
+	runFilterTestCases[int](t, getIntFilterTestCases())
+	runFilterTestCases[string](t, getStringFilterTestCases())
+	runFilterTestCases[testStruct](t, getStructFilterTestCases())
 }
 
-func getIntTestCases() []filterTestCase[int] {
+func getIntFilterTestCases() []filterTestCase[int] {
 	const (
 		MaxUint = ^uint(0)
 		MinUint = 0
@@ -67,7 +67,7 @@ func getIntTestCases() []filterTestCase[int] {
 	}
 }
 
-func getStringTestCases() []filterTestCase[string] {
+func getStringFilterTestCases() []filterTestCase[string] {
 	stringSomeFiltrator := func(a string) bool { return strings.Contains(a, "some") }
 
 	return []filterTestCase[string]{
@@ -98,7 +98,7 @@ func getStringTestCases() []filterTestCase[string] {
 	}
 }
 
-func getStructTestCases() []filterTestCase[testStruct] {
+func getStructFilterTestCases() []filterTestCase[testStruct] {
 	now := time.Now()
 
 	filledStruct := testStruct{
