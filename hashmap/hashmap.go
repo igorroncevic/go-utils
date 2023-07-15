@@ -29,6 +29,7 @@ func New[K, V any](capacity uint64, equals util.EqualsFn[K], hash util.HashFn[K]
 	if capacity == 0 {
 		capacity = 1
 	}
+
 	capacity = pow2ceil(capacity)
 
 	return &Map[K, V]{
@@ -59,6 +60,7 @@ func (m *Map[K, V]) Get(key K) (V, bool) {
 	}
 
 	var empty V
+
 	return empty, false
 }
 
@@ -115,11 +117,14 @@ func (m *Map[K, V]) Put(key K, val V) {
 }
 
 func (m *Map[K, V]) remove(idx uint64) {
-	var k K
-	var v V
+	var (
+		key K
+		val V
+	)
+
 	m.entries[idx].filled = false
-	m.entries[idx].key = k
-	m.entries[idx].value = v
+	m.entries[idx].key = key
+	m.entries[idx].value = val
 	m.length--
 }
 
@@ -182,6 +187,7 @@ func (m *Map[K, V]) Size() int {
 // additional allocations.
 func (m *Map[K, V]) Copy() *Map[K, V] {
 	m.readonly = true
+
 	return &Map[K, V]{
 		entries:  m.entries,
 		capacity: m.capacity,
@@ -209,8 +215,10 @@ func (m *Map[K, V]) getIndex(hash uint64) uint64 {
 // pow2ceil helps determine capacity, which is always to the power of 2.
 func pow2ceil(num uint64) uint64 {
 	power := uint64(1)
+
 	for power < num {
 		power *= 2
 	}
+
 	return power
 }

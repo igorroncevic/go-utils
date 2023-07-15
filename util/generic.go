@@ -38,6 +38,7 @@ func Compare[T any](a, b T, less LessFn[T]) int {
 	} else if less(b, a) {
 		return 1
 	}
+
 	return 0
 }
 
@@ -46,6 +47,7 @@ func Max[T constraints.Ordered](a, b T) T {
 	if a > b {
 		return a
 	}
+
 	return b
 }
 
@@ -54,6 +56,7 @@ func Min[T constraints.Ordered](a, b T) T {
 	if a < b {
 		return a
 	}
+
 	return b
 }
 
@@ -68,6 +71,7 @@ func MaxFunc[T any](a, b T, less LessFn[T]) T {
 	if less(b, a) {
 		return a
 	}
+
 	return b
 }
 
@@ -76,6 +80,7 @@ func MinFunc[T any](a, b T, less LessFn[T]) T {
 	if less(a, b) {
 		return a
 	}
+
 	return b
 }
 
@@ -128,5 +133,6 @@ func hash(u uint64) uint64 {
 	u ^= u >> 33
 	u *= 0xc4ceb9fe1a85ec53
 	u ^= u >> 33
+
 	return u
 }

@@ -2,9 +2,9 @@ package hashmap_test
 
 import (
 	"fmt"
-	"math/rand"
 	"testing"
 
+	"github.com/alecthomas/assert"
 	"github.com/igorroncevic/go-utils/hashmap"
 	"github.com/igorroncevic/go-utils/util"
 )
@@ -21,31 +21,44 @@ func checkeq[K any, V comparable](hmap *hashmap.Map[K, V], get func(k K) (V, boo
 }
 
 func TestHashmapVsStandardMapCrossCheck(t *testing.T) {
-	stdmap := make(map[uint64]uint32)
-	hmap := hashmap.New[uint64, uint32](uint64(rand.Intn(1024)), util.Equals[uint64], util.HashUint64)
+	randSize, err := util.RandomInt64(1024)
+	assert.NoError(t, err, "error generating random hmap size")
+	assert.NotEqual(t, -1, randSize, "randSize is empty")
+
+	stdmap := make(map[int64]int64)
+	hmap := hashmap.New[int64, int64](uint64(randSize), util.Equals[int64], util.HashInt64)
 
 	const nops = 1000
 
 	for i := 0; i < nops; i++ {
-		key := uint64(rand.Intn(100))
-		val := rand.Uint32()
-		op := rand.Intn(2)
+		key, err := util.RandomInt64(1000)
+		assert.NoError(t, err, "error generating key")
+		assert.NotEqual(t, -1, key, "key is empty")
+
+		val, err := util.RandomInt64(100000)
+		assert.NoError(t, err, "error generating value")
+		assert.NotEqual(t, -1, val, "val is empty")
+
+		op, err := util.RandomInt64(2)
+		assert.NoError(t, err, "error generating op")
+		assert.NotEqual(t, -1, op, "op is empty")
 
 		switch op {
 		case 0:
 			stdmap[key] = val
 			hmap.Put(key, val)
 		case 1:
-			var del uint64
+			var del int64
 			for k := range stdmap {
 				del = k
 				break
 			}
+
 			delete(stdmap, del)
 			hmap.Remove(del)
 		}
 
-		checkeq(hmap, func(k uint64) (uint32, bool) {
+		checkeq(hmap, func(k int64) (int64, bool) {
 			v, ok := stdmap[k]
 			return v, ok
 		}, t)
@@ -88,11 +101,4 @@ func TestHashmapFlow(t *testing.T) {
 
 	fmt.Println(hmap.Get("foo"))
 	fmt.Println(hmap.Get("bar"))
-	// Output:
-	// 42 true
-	// 0 false
-	// 0 false
-	// 13 true
-	// 0 false
-	// 0 false
 }
