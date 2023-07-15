@@ -13,7 +13,7 @@ func New[T any]() *Queue[T] {
 }
 
 // Dequeue puts the item at the back of the queue.
-func (q *Queue[T]) Queue(val T) {
+func (q *Queue[T]) Enqueue(val T) {
 	q.elems = append([]T{val}, q.elems...)
 }
 
