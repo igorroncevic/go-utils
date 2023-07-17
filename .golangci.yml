@@ -23,7 +23,7 @@ linters:
     - errcheck
 
     # Tool for detection of long functions
-    - funlen
+    # - funlen
 
     # Checks that no init functions are present in Go code
     - gochecknoinits

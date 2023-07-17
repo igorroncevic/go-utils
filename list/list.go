@@ -266,6 +266,7 @@ func (n *Node[T]) Each(fn func(n *Node[T]) bool) {
 		if shouldStop := fn(node); shouldStop {
 			return
 		}
+
 		node = node.Next
 	}
 }
