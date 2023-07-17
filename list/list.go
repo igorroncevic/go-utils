@@ -22,8 +22,9 @@ func New[T any](isLessFunc util.LessFn[T], isEqualFunc util.EqualsFn[T]) *List[T
 	}
 }
 
+// Push adds a value to the list in an ascending order.
 func (l *List[T]) Push(val T) {
-	// If no head, create it
+	// If there's no head, create it
 	if l.Head == nil {
 		l.Head = &Node[T]{
 			Value: val,
@@ -32,12 +33,7 @@ func (l *List[T]) Push(val T) {
 		return
 	}
 
-	// NOP
-	if l.isEqualFunc(l.Head.Value, val) {
-		return
-	}
-
-	// If element is smaller than head, it should be the new head
+	// head >= val - If element is smaller than head, it should be the new head
 	if !l.isLessFunc(l.Head.Value, val) {
 		oldHead := l.Head
 		l.Head = &Node[T]{
@@ -55,15 +51,10 @@ func (l *List[T]) Push(val T) {
 	}
 
 	l.Head.Each(func(curr *Node[T]) bool {
-		// If there is the exact same element, just update the value
-		if l.isEqualFunc(curr.Value, val) {
-			curr.Value = val
-			return true
-		}
-
+		// curr < val - we skip over this node
 		// Sorted list requires us to find first node where `node.Value > val`
 		if l.isLessFunc(curr.Value, val) {
-			// We are at the last node, value is still not smaller -> val be in the last node
+			// Unless, we are at the last node and value is still not smaller -> 'val' should be in the last node
 			if curr.Next == nil {
 				newNode := Node[T]{
 					Value: val,
@@ -78,17 +69,18 @@ func (l *List[T]) Push(val T) {
 		}
 
 		// Important: Go back one step, because we've found a first element that is larger than val
-		// therefore, previous element should still be smaller and we should put val in between them.
+		// therefore, previous element should still be smaller and we should put 'val' in between them.
 		if curr.Prev != nil {
 			curr = curr.Prev
 		}
 
-		// 1. curr -> next
+		// 1. curr <-> next
 		// 2. insert newNode
 		// 	- 2.a. curr.Next ----> newNode,
 		// 	- 2.b. newNode.Next -> next
 		// 	- 2.c. curr <-------- newNode.Prev,
 		// 	- 2.d. newNode <----- next.Prev
+		// result: curr <-> newNode <-> next
 
 		// 2.b, 2.c.
 		newNode := Node[T]{
@@ -109,40 +101,42 @@ func (l *List[T]) Push(val T) {
 	})
 }
 
+// Reverse returns a new reversed list.
 func (l *List[T]) Reverse() *List[T] {
 	listCopy := l.Copy()
 
 	var (
-		prev, next *Node[T]
-		curr       = listCopy.Head
+		tempPrev, tempNext *Node[T]
+		curr               = listCopy.Head
 	)
 
-	// 2, 3, 5, 6, 10
 	for curr != nil {
 		// Temporary store old values
-		next = curr.Next
-		prev = curr.Prev
+		tempNext = curr.Next
+		tempPrev = curr.Prev
 
-		// Reverse current's pointer
-		curr.Next = prev
-		curr.Prev = next
+		// Reverse current with temporary old values
+		curr.Next = tempPrev
+		curr.Prev = tempNext
 
-		// Move pointers forward
-		prev = curr
-		curr = next
+		// Move forward
+		tempPrev = curr
+		curr = tempNext
 	}
 
-	listCopy.Head = prev
+	listCopy.Head = tempPrev
 
 	return listCopy
 }
 
 // Remove removes the node with value 'val' from the list.
 func (l *List[T]) Remove(val T) {
+	// If no head, there's nothing to remove
 	if l.Head == nil {
 		return
 	}
 
+	// If there's head, check if we're deleting its value
 	if l.Head != nil {
 		if l.isEqualFunc(l.Head.Value, val) {
 			if l.Head.Next == nil {
@@ -159,14 +153,15 @@ func (l *List[T]) Remove(val T) {
 	}
 
 	l.Head.Each(func(curr *Node[T]) bool {
+		// If this is not the values we're looking for, move on
 		if !l.isEqualFunc(curr.Value, val) {
 			return false
 		}
 
-		// 1. prev -> curr -> next
+		// 1. prev <-> curr <-> next
 		// 2. remove newNode
-		// 	- 2.a. curr.Prev.Next -> curr.Next == prev -> next
-		// 	- 2.b. curr.Next.Prev -> curr.Prev ======= prev <- next
+		// 	- 2.a. prev -> next ===== curr.Prev.Next -> curr.Next
+		// 	- 2.b. prev <- next ===== curr.Next.Prev -> curr.Prev
 
 		// 2.a.
 		if curr.Prev != nil {
@@ -182,6 +177,7 @@ func (l *List[T]) Remove(val T) {
 	})
 }
 
+// Contains returns whether the value is contained in the list.
 func (l *List[T]) Contains(val T) bool {
 	var found bool
 
@@ -197,10 +193,11 @@ func (l *List[T]) Contains(val T) bool {
 	return found
 }
 
-func (l *List[T]) Get(val T) *T {
+// Get returns a node with the specified value.
+func (l *List[T]) Get(val T) *Node[T] {
 	var (
 		found bool
-		node  *T
+		node  *Node[T]
 	)
 
 	l.Head.Each(func(curr *Node[T]) bool {
@@ -208,7 +205,7 @@ func (l *List[T]) Get(val T) *T {
 			return false
 		}
 
-		node = &curr.Value
+		node = curr
 		found = true
 		return found
 	})
@@ -216,6 +213,7 @@ func (l *List[T]) Get(val T) *T {
 	return node
 }
 
+// Size returns the number of elements in the list.
 func (l *List[T]) Size() int {
 	var size int
 
@@ -227,10 +225,12 @@ func (l *List[T]) Size() int {
 	return size
 }
 
+// Clear clears the list completely.
 func (l *List[T]) Clear() {
 	l.Head = nil
 }
 
+// Copy creates a new list with same values as the original.
 func (l *List[T]) Copy() *List[T] {
 	copy := &List[T]{
 		isLessFunc:  l.isLessFunc,
