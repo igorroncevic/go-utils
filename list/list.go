@@ -109,7 +109,35 @@ func (l *List[T]) Push(val T) {
 	})
 }
 
-// Remove removes the node 'n' from the list.
+func (l *List[T]) Reverse() *List[T] {
+	listCopy := l.Copy()
+
+	var (
+		prev, next *Node[T]
+		curr       = listCopy.Head
+	)
+
+	// 2, 3, 5, 6, 10
+	for curr != nil {
+		// Temporary store old values
+		next = curr.Next
+		prev = curr.Prev
+
+		// Reverse current's pointer
+		curr.Next = prev
+		curr.Prev = next
+
+		// Move pointers forward
+		prev = curr
+		curr = next
+	}
+
+	listCopy.Head = prev
+
+	return listCopy
+}
+
+// Remove removes the node with value 'val' from the list.
 func (l *List[T]) Remove(val T) {
 	if l.Head == nil {
 		return
@@ -201,6 +229,22 @@ func (l *List[T]) Size() int {
 
 func (l *List[T]) Clear() {
 	l.Head = nil
+}
+
+func (l *List[T]) Copy() *List[T] {
+	copy := &List[T]{
+		isLessFunc:  l.isLessFunc,
+		isEqualFunc: l.isEqualFunc,
+	}
+
+	// Recreate the list from a slice to avoid pointer issues
+	sliced := l.ToSlice()
+
+	for _, elem := range sliced {
+		copy.Push(elem)
+	}
+
+	return copy
 }
 
 // ToSlice returns a slice representation of the list.

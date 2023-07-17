@@ -50,8 +50,14 @@ func TestList(t *testing.T) {
 	assert.Equal(t, 5, linkedList.Size(), "unexpected list size after remove")
 	assert.EqualValues(t, []int{2, 3, 5, 6, 10}, linkedList.ToSlice(), "unexpected slice values after remove")
 
-	// Clear the list
-	linkedList.Clear()
+	// Reverse the list
+	reversedList := linkedList.Reverse()
 
-	assert.Equal(t, 0, linkedList.Size(), "unexpected list size after clear")
+	assert.Equal(t, 5, reversedList.Size(), "unexpected list size after reverse")
+	assert.EqualValues(t, []int{10, 6, 5, 3, 2}, reversedList.ToSlice(), "unexpected slice values after reverse")
+
+	// Clear the list
+	reversedList.Clear()
+
+	assert.Equal(t, 0, reversedList.Size(), "unexpected list size after clear")
 }
